@@ -4,15 +4,11 @@ import api from '../../services/api';
 import { Link } from 'react-router-dom';
 
 interface Repository {
-    results: [
-        {
-            id: string;
-            name: string;
-            image: {
-                url: string;
-            }
-        },
-    ];
+    id: string;
+    name: string;
+    image: {
+        url: string;
+    }
 
 }
 
@@ -31,15 +27,16 @@ const Dashboard: React.FC = () =>{
         };
 
         try {
-            const response = await api.get<Repository>(`/search/${newHeroi}`);
+            const response = await api.get(`/search/${newHeroi}`);
             //console.log(response.data)
-            const repository = response.data
+            const repository = response.data.results[0]
+            //console.log(repository.results[0])
             //console.log(repository.results[0].image.url)
             setHerois([...herois, repository])
             setNewHeroi('');
             setInputError('');
-        } catch (err) {
-            setInputError('Heroi Inexistente!');
+        }catch(err) {
+            setInputError('Heroi Inexistente');
         };
 
     };
@@ -58,9 +55,9 @@ const Dashboard: React.FC = () =>{
             {inputError && <Error>{inputError}</Error>}
             <Listas>
                 {herois.map((heroi =>(
-                <Link key={heroi.results[0].id} to={`/powerstats/${heroi.results[0].name}`}>
-                    <img src={heroi.results[0].image.url} alt= {heroi.results[0].name}/>
-                    <strong>{heroi.results[0].name}</strong>
+                <Link key={heroi.id} to={`/powerstats/${heroi.name}`}>
+                    <img src={heroi.image.url} alt= {heroi.name}/>
+                    <strong>{heroi.name}</strong>
                 </Link>)))
                 }
             </Listas>
